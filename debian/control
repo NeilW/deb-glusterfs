@@ -33,7 +33,7 @@ Description: clustered file-system
 
 Package: glusterfs-server
 Architecture: any
-Depends: glusterfs-client, lsb-base (>= 1.3-9ubuntu3)
+Depends: glusterfs-client, lsb-base (>= 3.0-6)
 Suggests: glusterfs-examples
 Description: clustered file-system
  GlusterFS is a clustered file-system capable of scaling to several

@@ -4,7 +4,6 @@ include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
 install/glusterfs-server::
-	cp extras/init.d/glusterfs-server debian/glusterfs-server.init
 	mv debian/tmp/etc/glusterfs/glusterfs-client.vol.sample \
 	   debian/tmp/etc/glusterfs/glusterfs-client.vol
 	mv debian/tmp/etc/glusterfs/glusterfs-server.vol.sample \
@@ -21,4 +20,4 @@ install/libglusterfs0::
 		debian/tmp/usr/lib/glusterfs/*/xlator/debug/trace.so
 
 clean::
-	rm -rf glusterfs*.8 debian/glusterfs-server.init
+	rm -rf glusterfs*.8 
