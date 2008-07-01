@@ -10,7 +10,7 @@ common-build-arch::
 	help2man -n "GlusterFS client" glusterfs/src/glusterfs | \
 		sed -e 's,lt-glusterfs,glusterfs,' -e 's,^.TH \([^ ]*\) [^ ]*,.TH \1 8,' > glusterfs.8
 
-build/glusterfs-server::
+install/glusterfs-server::
 	cp extras/init.d/glusterfs-server debian/glusterfs-server.init
 	mv debian/tmp/etc/glusterfs/glusterfs-client.vol.sample \
 	   debian/tmp/etc/glusterfs/glusterfs-client.vol
