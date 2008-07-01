@@ -1,0 +1,10 @@
+glusterfs for Debian
+--------------------
+
+The glusterfs server installs configurations and init scripts that
+launches a simple glusterfs server on the current machine, providing
+access to /home/export
+
+The package glusterfs-examples contains lots of different glusterfs
+configuration files that you can use as templates for your own server.
+
