@@ -16,6 +16,7 @@ install/glusterfs-server::
 	   debian/tmp/etc/glusterfs/glusterfs-client.vol
 	mv debian/tmp/etc/glusterfs/glusterfs-server.vol.sample \
 	   debian/tmp/etc/glusterfs/glusterfs-server.vol
+	ln -s glusterfs.8 debian/tmp/usr/share/man/man8/glusterfsd.8 
 
 install/libglusterfs0::
 	for f in debian/tmp/usr/lib/glusterfs/*/xlator/debug/trace.so; do \
