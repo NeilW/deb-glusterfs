@@ -1,0 +1,6 @@
+GlusterFS is a powerful network/cluster filesystem. The storage server
+(or each in a cluster) runs glusterfsd and the clients use mount
+command or glusterfs client to mount the exported filesystem. You can
+keep scaling your storage beyond peta bytes as your demand increases.
+
+Please visit http://www.gluster.org/glusterfs.php for more info.

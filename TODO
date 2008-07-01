@@ -1,0 +1,28 @@
+
+1.3.8:
+------
+* Docs update (user-guide.pdf) - vikas
+* wiki docs update - amar (with others)
+* nufa local volume binding
+* Release Notes.
+* Testing
+
+1.3.9
+-----
+* more testing.. bug fixes on 1.3.8
+* more logging and error check enhancements
+* volume check tool
+* macros support for volume spec file
+* web gui and monitoring tools.
+
+
+1.4
+---
+
+
+* Thinking of a way to handle simple way to NUFA and SWITCH to have multiple schedulers
+
+* MacFUSE issues
+
+* ib-verbs pingpong tool using GlusterFS library.
+

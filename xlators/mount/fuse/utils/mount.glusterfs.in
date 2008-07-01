@@ -1,0 +1,130 @@
+#!/bin/sh
+# (C) 2006, 2007, 2008 Z RESEARCH Inc. <http://www.zresearch.com>
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of
+# the License, or (at your option) any later version.
+#   
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#   
+# You should have received a copy of the GNU General Public
+# License along with this program; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301 USA
+
+
+
+_init ()
+{
+    # log level definitions
+    LOG_NONE=NONE;
+    LOG_CRITICAL=CRITICAL;
+    LOG_ERROR=ERROR;
+    LOG_WARNING=WARNING;
+    LOG_DEBUG=DEBUG;
+
+    # set default log level to ERROR
+    log_level=$LOG_ERROR;
+}
+
+start_glusterfs ()
+{
+    prefix="@prefix@";
+    exec_prefix=@exec_prefix@;
+    cmd_line=$(echo "@sbindir@/glusterfs");
+    
+    if [ -n "$log_level_str" ]; then
+	case "$log_level_str" in
+	    "ERROR")
+		log_level=$LOG_ERROR;
+		;;
+	    "DEBUG")
+		log_level=$LOG_DEBUG;
+		;;
+	    "CRITICAL")
+		log_level=$LOG_CRITICAL;
+		;;
+	    "WARNING")
+		log_level=$LOG_WARNING;
+		;;
+	    "NONE")
+		log_level=$LOG_NONE;
+		;;
+	    *)
+		echo "invalid log level $log_level_str, using ERROR";
+		log_level=$LOG_ERROR;
+		;;
+	esac
+    fi
+    cmd_line=$(echo "$cmd_line --log-level=$log_level");
+    
+    if [ -n "$log_file" ]; then
+	cmd_line=$(echo "$cmd_line --log-file=$log_file");
+    fi
+
+    if [ -n "$direct_io_mode" ]; then
+	cmd_line=$(echo "$cmd_line --direct-io-mode=$direct_io_mode");
+    fi
+    
+    if [ -z "$spec_location" ]; then
+	cmd_line=$(echo "$cmd_line \
+--server=$spec_server_ip \
+--port=$spec_server_port");
+    else
+	cmd_line=$(echo "$cmd_line --spec-file=$spec_location");
+    fi
+
+    if [ -n "$volume_name" ]; then
+        cmd_line=$(echo "$cmd_line --volume-name=$volume_name");
+    fi
+    
+    cmd_line=$(echo "$cmd_line $mount_point");
+    exec $cmd_line;
+}
+
+
+main ()
+{
+    options=$(echo "$@" | sed -n 's/.*\-o[ ]*\([^ ]*\).*/\1/p');
+    new_log_level=$(echo "$options" | sed -n 's/.*log-level=\([^,]*\).*/\1/p');
+    
+    [ -n "$new_log_level" ] && {
+	log_level_str="$new_log_level";
+    }
+    log_file=$(echo "$options" | sed -n 's/.*log-file=\([^,]*\).*/\1/p');
+
+    direct_io_mode=$(echo "$options" | sed -n 's/.*direct-io-mode=\([^,]*\).*/\1/p');
+
+    volume_name=$(echo "$options" | sed -n 's/.*volume-name=\([^,]*\).*/\1/p');
+    
+    spec_location="$1";
+    
+    [ -r "$spec_location" ] || {
+	spec_server_ip=$(echo "$spec_location" | sed -n 's/\([^\:]*\).*/\1/p');
+	spec_server_port=$(echo "$spec_location" | sed -n 's/.*:\([^ ]*\).*/\1/p');
+	[ -n "$spec_server_port" ] || {
+	    spec_server_port="6996";
+	}
+
+	spec_location="";
+    }
+    new_fs_options=$(echo "$options" | sed -e 's/[,]*log-file=[^,]*//' \
+	                                   -e 's/[,]*log-level=[^,]*//' \
+	                                   -e 's/[,]*volume-name=[^,]*//' \
+	                                   -e 's/[,]*direct-io-mode=[^,]*//' \
+	                                   -e 's/[,]*spec=[^,]*//');
+    # following line is product of love towards sed
+    # $2=$(echo "$@" | sed -n 's/[^ ]* \([^ ]*\).*/\1/p');
+    
+    mount_point="$2";
+    
+    fs_options=$(echo "$fs_options,$new_fs_options");
+    
+    start_glusterfs;
+}
+
+_init "$@" && main "$@";
