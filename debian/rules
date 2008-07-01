@@ -9,6 +9,7 @@ include /usr/share/cdbs/1/class/autotools.mk
 common-build-arch::
 	help2man -n "GlusterFS client" glusterfs/src/glusterfs | \
 		sed -e 's,lt-glusterfs,glusterfs,' -e 's,^.TH \([^ ]*\) [^ ]*,.TH \1 8,' > glusterfs.8
+	ln -s glusterfs.8 glusterfsd.8
 
 install/glusterfs-server::
 	cp extras/init.d/glusterfs-server debian/glusterfs-server.init
@@ -27,4 +28,4 @@ install/libglusterfs0::
 		debian/tmp/usr/lib/glusterfs/*/xlator/debug/trace.so
 
 clean::
-	rm -rf glusterfs.8 debian/glusterfs-server.init
+	rm -rf glusterfs*.8 debian/glusterfs-server.init
