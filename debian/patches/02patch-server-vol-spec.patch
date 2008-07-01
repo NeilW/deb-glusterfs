@@ -1,0 +1,25 @@
+diff --git a/doc/glusterfs-server.vol.sample b/doc/glusterfs-server.vol.sample
+index e90b218..8a6ceb6 100644
+--- a/doc/glusterfs-server.vol.sample
++++ b/doc/glusterfs-server.vol.sample
+@@ -18,7 +18,7 @@
+ ### Export volume "brick" with the contents of "/home/export" directory.
+ volume brick
+   type storage/posix                   # POSIX FS translator
+-  option directory /home/export        # Export this directory
++  option directory /srv/export        # Export this directory
+ end-volume
+ 
+ ### Add network serving capability to above brick.
+@@ -31,9 +31,9 @@ volume server
+ # option ib-verbs-work-request-recv-count 64
+ # option transport-type ib-sdp/server  # For Infiniband transport
+ # option transport-type ib-verbs/server # For ib-verbs transport
+-# option bind-address 192.168.1.10     # Default is to listen on all interfaces
++  option bind-address 127.0.0.1     # Default is to listen on all interfaces
+ # option listen-port 6996              # Default is 6996
+-# option client-volume-filename /etc/glusterfs/glusterfs-client.vol
++  option client-volume-filename /etc/glusterfs/glusterfs-client.vol
+   subvolumes brick
+ # NOTE: Access to any volume through protocol/server is denied by
+ # default. You need to explicitly grant access through # "auth"
