@@ -1,0 +1,2 @@
+libglusterfs/src/*.h /usr/include/glusterfs/
+debian/tmp/usr/lib/libglusterfs.{a,la,so}

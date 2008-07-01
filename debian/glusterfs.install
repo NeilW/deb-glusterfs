@@ -1,0 +1,5 @@
+debian/tmp/sbin/mount.glusterfs
+debian/tmp/usr/sbin/glusterfs
+debian/tmp/usr/sbin/glusterfsd
+debian/tmp/etc/glusterfs/glusterfs-client.vol.sample
+debian/tmp/etc/glusterfs/glusterfs-server.vol.sample

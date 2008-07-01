@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+DEB_DH_INSTALLINIT_ARGS = --no-start
+DEB_INSTALL_MANPAGES_glusterfs := glusterfs.8 debian/mount.glusterfs.8
+
+common-build-arch::
+	help2man -n "GlusterFS client" glusterfs/src/glusterfs | \
+		sed -e 's,lt-glusterfs,glusterfs,' -e 's,^.TH \([^ ]*\) [^ ]*,.TH \1 8,' > glusterfs.8
+
+build/glusterfs-server::
+	cp extras/init.d/glusterfs-server debian/glusterfs-server.init
+
+install/libglusterfs0::
+	for f in debian/tmp/usr/lib/glusterfs/*/xlator/debug/trace.so; do \
+		debug_path=`echo "$$f" | sed -e 's|debian/tmp|debian/glusterfs-dbg/usr/lib/debug|'`; \
+		install -d "`dirname $$debug_path`"; \
+		objcopy --only-keep-debug "$$f" "$$debug_path"; \
+	done
+	strip --remove-section=.comment --remove-section=.note --strip-unneeded \
+		debian/tmp/usr/lib/glusterfs/*/xlator/debug/trace.so
+
+clean::
+	rm -rf glusterfs.8 debian/glusterfs-server.init

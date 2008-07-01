@@ -1,0 +1,9 @@
+glusterfs for Debian
+--------------------
+
+To start using glusterFS, you must create configuration files in
+/etc/glusterfs using the provided example (*.sample) file.
+
+For more examples, consider installing the glusterfs-examples package.
+
+ -- Jeremy Lainé <jeremy.laine@m4x.org>  Wed, 02 Jan 2008 16:09:25 +0100

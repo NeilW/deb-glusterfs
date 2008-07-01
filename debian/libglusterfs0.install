@@ -1,0 +1,2 @@
+debian/tmp/usr/lib/glusterfs/*
+debian/tmp/usr/lib/libglusterfs.so.*

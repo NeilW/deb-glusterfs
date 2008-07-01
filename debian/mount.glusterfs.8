@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.\" This file is distributed under the same license as the glusterfs
+.\" package.
+.\" Copyright (C) LI Daobing <lidaobing@gmail.com>, 2008.
+.\"
+.TH MOUNT.GLUSTERFS 8 "2008-02-29"
+.SH NAME
+mount.glusterfs \- mount glusterfs filesystem
+.SH SYNOPSIS
+.B mount.glusterfs
+.I [\-o option[,option]...]
+SPEC-LOCATION
+MOUNT-POINT
+.SH OPTIONS
+.TP
+.B log\-level=LOGLEVEL
+LOGLEVEL should be one of DEBUG, WARNING, ERROR, CRITICAL,
+NONE. Defaults to ERROR
+.TP
+.B log\-file=LOGFILE
+Specify the file to redirect logs
+.TP
+.B direct\-io\-mode=ENABLE|DISABLE
+Whether to force directIO on fuse fd. Defaults to ENABLE
+.TP
+.B volume\-name=XXX
+Volume name in client spec to use. Defaults to the topmost volume
+.TP
+.B SPEC-LOCATION
+There are two formats of SPEC-LOCATION, one is a FILE PATH to specify
+the glusterfs config. Another is the SERVER IP and an optional SERVER
+PORT. for example, following are valid SPEC-LOCATION:
+
+.nf
+/etc/glusterfs/glusterfs-client.vol
+192.168.1.2:6996
+192.168.1.2
+.fi
+.SH SEE ALSO
+.BR glusterfs (8),
+.BR glusterfsd (8).
