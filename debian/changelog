@@ -1,3 +1,12 @@
+glusterfs (1.3.9-0ubuntu1~1.gbpd82405) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @d82405aacc2d3a52e2f5171637e413b32d3c4754 **
+
+  * UNRELEASED
+  * * debian/control: Split client and server packages out.
+
+ -- Neil Wilson <neil@brightbox.co.uk>  Tue, 01 Jul 2008 15:18:15 +0100
+
 glusterfs (1.3.9-0ubuntu1~ppa1~hardy1) hardy; urgency=low
 
   * port to hardy.

@@ -3,8 +3,8 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
-DEB_DH_INSTALLINIT_ARGS = --no-start
-DEB_INSTALL_MANPAGES_glusterfs := glusterfs.8 debian/mount.glusterfs.8
+#DEB_DH_INSTALLINIT_ARGS = --no-start
+#DEB_INSTALL_MANPAGES_glusterfs := glusterfs.8 debian/mount.glusterfs.8
 
 common-build-arch::
 	help2man -n "GlusterFS client" glusterfs/src/glusterfs | \
@@ -12,6 +12,10 @@ common-build-arch::
 
 build/glusterfs-server::
 	cp extras/init.d/glusterfs-server debian/glusterfs-server.init
+	mv debian/tmp/etc/glusterfs/glusterfs-client.vol.sample \
+	   debian/tmp/etc/glusterfs/glusterfs-client.vol
+	mv debian/tmp/etc/glusterfs/glusterfs-server.vol.sample \
+	   debian/tmp/etc/glusterfs/glusterfs-server.vol
 
 install/libglusterfs0::
 	for f in debian/tmp/usr/lib/glusterfs/*/xlator/debug/trace.so; do \
