@@ -57,7 +57,7 @@ Description: example files for the glusterfs server and client
  This package provides example configuration files for glusterfs.
 
 Package: libglusterfs0
-Section: libs
+Section: universe/libs
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: GlusterFS libraries and translator modules
@@ -73,7 +73,7 @@ Description: GlusterFS libraries and translator modules
  common to both GlusterFS server and client framework.
 
 Package: libglusterfs-dev
-Section: libdevel
+Section: universe/libdevel
 Architecture: any
 Depends: libc6-dev | libc-dev, libglusterfs0 (= ${binary:Version})
 Description: GlusterFS development Libraries and Headers (development files)
@@ -88,7 +88,7 @@ Description: GlusterFS development Libraries and Headers (development files)
  This package includes glusterfs development headers and libraries.
 
 Package: glusterfs-dbg
-Section: libdevel
+Section: universe/libdevel
 Priority: extra
 Architecture: any
 Depends: glusterfs-client (= ${binary:Version})

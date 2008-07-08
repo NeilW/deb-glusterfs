@@ -2,7 +2,7 @@ glusterfs (1.3.9-0ubuntu1) intrepid; urgency=low
 
   * public release (closes LP#246715)
   * debian/rules: Add get-orig-source target
-  * debian/control: Alter section to universe/admin
+  * debian/control: Alter section to point at universe
   * debian/copyright: Update to GPL-3
   * debian/watch: Add
   * Patch server volume file so that it shares to localhost automatically.
