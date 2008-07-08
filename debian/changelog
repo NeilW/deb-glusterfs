@@ -1,35 +1,22 @@
-glusterfs (1.3.9-0ubuntu1~ppa3~hardy1) hardy; urgency=low
+glusterfs (1.3.9-0ubuntu1) intrepid; urgency=low
 
-  * debian/watch: add
-  * Patch server volume file
+  * public release (closes LP#246715)
+  * debian/rules: Add get-orig-source target
+  * debian/control: Alter section to universe/admin
+  * debian/copyright: Update to GPL-3
+  * debian/watch: Add
+  * Patch server volume file so that it shares to localhost automatically.
   * debian/glusterfs-server.init: Add a new init script that doesn't
     hang on stop.
-
- -- Neil Wilson <neil@brightbox.co.uk>  Tue, 01 Jul 2008 20:51:53 +0100
-
-glusterfs (1.3.9-0ubuntu1~ppa2~hardy1) hardy; urgency=low
-
   * debian/control: Split client and server packages out.
   * debian/rules: Change sample configs to real ones. Remove --no-start
   * debian/rules: Make alterations at install time
   * debian/rules: Install daemon manpages in server.
   * debian/glusterfs-server.manpages: Add
   * Make separate README entries for client and server
-
- -- Neil Wilson <neil@brightbox.co.uk>  Tue, 01 Jul 2008 17:53:03 +0100
-
-glusterfs (1.3.9-0ubuntu1~ppa1~hardy1) hardy; urgency=low
-
-  * port to hardy.
-
- -- LI Daobing <lidaobing@gmail.com>  Thu, 29 May 2008 09:27:16 +0800
-
-glusterfs (1.3.9-1) unstable; urgency=low
-
   * new upstream release 1.3.9. 
-  * first upload to debian (closes: 419924)
 
- -- LI Daobing <lidaobing@gmail.com>  Thu, 29 May 2008 01:16:03 +0000
+ -- Neil Wilson <neil@brightbox.co.uk>  Tue, 08 Jul 2008 20:47:15 +0100
 
 glusterfs (1.3.8~pre5-1) unstable; urgency=low
 
