@@ -21,3 +21,6 @@ install/libglusterfs0::
 
 clean::
 	rm -rf glusterfs*.8 
+
+get-orig-source::
+	uscan --force-download --verbose
