@@ -3,31 +3,16 @@ Mon, 23 Jul 2007 15:23:32 -0300.
 
 It was then taken over for official Debian maintenance by the Debian GlusterFS Team.
 
+Ubuntu alterations by Neil Wilson <neil@brightbox.co.uk>
+
 It was downloaded from http://www.gluster.org
 
 Upstream Author: Please visit http://www.gluster.org/core-team.php for complete list of contributors.
 
-Copyright: (C) 2006,2007 Z RESEARCH Inc. <http://www.zresearch.com>
+Copyright: (C) 2006,2007,2008 Z RESEARCH Inc. <http://www.zresearch.com>
 
-License:
-
-  (C) 2006,2007 Z RESEARCH Inc. <http://www.zresearch.com>
-  
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License as
-  published by the Free Software Foundation; either version 2 of
-  the License, or (at your option) any later version.
-    
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-    
-  You should have received a copy of the GNU General Public
-  License along with this program; if not, write to the Free
-  Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-  Boston, MA 02110-1301 USA
+License: GPL-3 (/usr/share/common-licenses/GPL-3)
 
 The Debian packaging is (C) 2007, Debian GlusterFS Team
 <pkg-glusterfs-devel@lists.alioth.debian.org> and is licensed under the GPL, see
-`/usr/share/common-licenses/GPL'.
+/usr/share/common-licenses/GPL.
