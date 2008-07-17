@@ -1,3 +1,9 @@
+glusterfs (1.3.10-0ubunut1) intrepid; urgency=low
+
+  * New Upstream Version
+
+ -- Neil Wilson <neil@brightbox.co.uk>  Thu, 17 Jul 2008 09:20:07 +0100
+
 glusterfs (1.3.9-0ubuntu1) intrepid; urgency=low
 
   * public release (closes LP#246715)
