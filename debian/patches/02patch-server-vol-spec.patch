@@ -1,7 +1,8 @@
 diff --git a/doc/glusterfs-server.vol.sample b/doc/glusterfs-server.vol.sample
 index e90b218..8a6ceb6 100644
---- a/doc/glusterfs-server.vol.sample
-+++ b/doc/glusterfs-server.vol.sample
+diff -Nur -x '*.orig' -x '*~' glusterfs/doc/glusterfs-server.vol.sample glusterfs.new/doc/glusterfs-server.vol.sample
+--- glusterfs/doc/glusterfs-server.vol.sample	2008-06-06 04:02:02.000000000 +0100
++++ glusterfs.new/doc/glusterfs-server.vol.sample	2008-07-17 12:44:41.000000000 +0100
 @@ -18,7 +18,7 @@
  ### Export volume "brick" with the contents of "/home/export" directory.
  volume brick
@@ -11,7 +12,7 @@ index e90b218..8a6ceb6 100644
  end-volume
  
  ### Add network serving capability to above brick.
-@@ -31,9 +31,9 @@ volume server
+@@ -31,9 +31,9 @@
  # option ib-verbs-work-request-recv-count 64
  # option transport-type ib-sdp/server  # For Infiniband transport
  # option transport-type ib-verbs/server # For ib-verbs transport
