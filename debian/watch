@@ -1,2 +1,2 @@
 version=3
-http://ftp.zresearch.com/pub/gluster/glusterfs/(\d\.\d)/glusterfs-(\d.*)\.tar\.gz 
+http://ftp.zresearch.com/pub/gluster/glusterfs/(\d\.\d)/glusterfs-(\d.*)\.tar\.gz debian git-import-orig
