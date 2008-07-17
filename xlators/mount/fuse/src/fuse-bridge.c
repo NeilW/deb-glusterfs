@@ -49,6 +49,7 @@ struct fuse_private {
   char *mount_point;
   data_t *buf;
   pthread_t fuse_thread;
+  char fuse_thread_started;
 
   uint32_t direct_io_mode;
   uint32_t entry_timeout;
@@ -71,10 +72,11 @@ do {                                                            \
   dict_unref (refs);                                            \
 } while (0)
 
-#define FUSE_FOP_NOREPLY(state, op_num, fop, args ...)           \
+#define FUSE_FOP_NOREPLY(_state, op_num, fop, args ...)          \
 do {                                                             \
-  call_frame_t *_frame = get_call_frame_for_req (state, 0);      \
+  call_frame_t *_frame = get_call_frame_for_req (_state, 0);     \
   xlator_t *xl = _frame->this->children->xlator;                 \
+  _frame->root->state = _state;                                  \
   _frame->root->req_refs = NULL;                                 \
   _frame->op   = op_num;                                         \
   STACK_WIND (_frame, fuse_nop_cbk, xl, xl->fops->fop, args);    \
@@ -196,8 +198,15 @@ fuse_nop_cbk (call_frame_t *frame,
 	      int32_t op_ret,
 	      int32_t op_errno)
 {
-  if (frame->root->state)
-    free_state (frame->root->state);
+  fuse_state_t *state = NULL;
+
+  state = frame->root->state;
+
+  if (state) {
+    if (state->fd)
+      fd_destroy (state->fd);
+    free_state (state);
+  }
 
   frame->root->state = EEEEKS;
   STACK_DESTROY (frame->root);
@@ -681,10 +690,24 @@ fuse_fd_cbk (call_frame_t *frame,
       gf_log ("glusterfs-fuse", GF_LOG_WARNING, "open() got EINTR");
       state->req = 0;
 
-      if (S_ISDIR (fd->inode->st_mode))
-	FUSE_FOP_NOREPLY (state, GF_FOP_CLOSEDIR, closedir, fd);
-      else
-	FUSE_FOP_NOREPLY (state, GF_FOP_CLOSE, close, fd);
+      LOCK (&fd->inode->lock);
+      {
+	list_del_init (&fd->inode_list);
+      }
+      UNLOCK (&fd->inode->lock);
+
+      {
+	fuse_state_t *new_state = calloc (1, sizeof (*new_state));
+
+	new_state->fd = fd;
+	new_state->this = state->this;
+	new_state->pool = state->pool;
+
+	if (S_ISDIR (fd->inode->st_mode))
+	  FUSE_FOP_NOREPLY (new_state, GF_FOP_CLOSEDIR, closedir, fd);
+	else
+	  FUSE_FOP_NOREPLY (new_state, GF_FOP_CLOSE, close, fd);
+      }
     }
   } else {
     gf_log ("glusterfs-fuse", GF_LOG_ERROR,
@@ -1425,8 +1448,21 @@ fuse_create_cbk (call_frame_t *frame,
     if (fuse_reply_create (req, &e, &fi) == -ENOENT) {
       gf_log ("glusterfs-fuse", GF_LOG_WARNING, "create() got EINTR");
       /* TODO: forget this node too */
+      LOCK (&fd->inode->lock);
+      {
+	list_del_init (&fd->inode_list);
+      }
+      UNLOCK (&fd->inode->lock);
       state->req = 0;
-      FUSE_FOP_NOREPLY (state, GF_FOP_CLOSE, close, fd);
+      {
+	fuse_state_t *new_state = calloc (1, sizeof (*new_state));
+
+	new_state->fd = fd;
+	new_state->this = state->this;
+	new_state->pool = state->pool;
+
+	FUSE_FOP_NOREPLY (new_state, GF_FOP_CLOSE, close, fd);
+      }
     }
   } else {
     gf_log ("glusterfs-fuse", GF_LOG_ERROR,
@@ -2291,6 +2327,8 @@ fuse_removexattr (fuse_req_t req,
   return;
 }
 
+static int gf_fuse_lk_log;
+
 static int32_t
 fuse_getlk_cbk (call_frame_t *frame,
 		void *cookie,
@@ -2306,8 +2344,20 @@ fuse_getlk_cbk (call_frame_t *frame,
 	    "%"PRId64": ERR => 0", frame->root->unique);
     fuse_reply_lock (state->req, lock);
   } else {
-    gf_log ("glusterfs-fuse", GF_LOG_ERROR,
-	    "%"PRId64": ERR => -1 (%d)", frame->root->unique, op_errno);
+    if (op_errno == ENOSYS)
+      {
+	gf_fuse_lk_log++;
+	if (!(gf_fuse_lk_log % 100))
+	  {
+	    gf_log ("glusterfs-fuse", GF_LOG_ERROR,
+		    "%"PRId64": ERR => -1 (%d)", frame->root->unique, op_errno);
+	  }
+      }
+    else
+      {
+	gf_log ("glusterfs-fuse", GF_LOG_ERROR,
+		"%"PRId64": ERR => -1 (%d)", frame->root->unique, op_errno);
+      }
     fuse_reply_err (state->req, op_errno);
   }
 
@@ -2357,8 +2407,20 @@ fuse_setlk_cbk (call_frame_t *frame,
 	    "%"PRId64": ERR => 0", frame->root->unique);
     fuse_reply_err (state->req, 0);
   } else {
-    gf_log ("glusterfs-fuse", GF_LOG_ERROR,
-	    "%"PRId64": ERR => -1 (%d)", frame->root->unique, op_errno);
+    if (op_errno == ENOSYS)
+      {
+	gf_fuse_lk_log++;
+	if (!(gf_fuse_lk_log % 100))
+	  {
+	    gf_log ("glusterfs-fuse", GF_LOG_ERROR,
+		    "%"PRId64": ERR => -1 (%d)", frame->root->unique, op_errno);
+	  }
+      }
+    else
+      {
+	gf_log ("glusterfs-fuse", GF_LOG_ERROR,
+		"%"PRId64": ERR => -1 (%d)", frame->root->unique, op_errno);
+      }
     fuse_reply_err (state->req, op_errno);
   }
 
@@ -2534,7 +2596,35 @@ fuse_thread_proc (void *data)
 int32_t
 notify (xlator_t *this, int32_t event,
 	void *data, ...)
-{
+{  
+  switch (event)
+    {
+    case GF_EVENT_CHILD_UP:
+      {
+	struct fuse_private *private = this->private;
+	int32_t ret = 0;
+
+	if (!private->fuse_thread_started)
+	  {
+	    private->fuse_thread_started = 1;
+
+	    ret = pthread_create (&private->fuse_thread, NULL,
+				  fuse_thread_proc, this);
+
+	    if (ret != 0)
+	      gf_log ("glusterfs-fuse", GF_LOG_ERROR,
+		      "pthread_create() failed (%s)", strerror (errno));
+	    assert (ret == 0);
+	  }
+	break;
+      }
+    case GF_EVENT_PARENT_UP:
+      {
+	default_notify (this, GF_EVENT_PARENT_UP, data);
+      }
+    default:
+      break;
+    }
 
   return 0;
 }
@@ -2636,14 +2726,8 @@ init (xlator_t *this)
 
   priv->mount_point = mount_point;
 
-  if (pthread_create (&priv->fuse_thread, NULL, fuse_thread_proc, this) != 0) {
-    gf_log ("glusterfs-fuse", GF_LOG_ERROR,
-	    "pthread_create() failed (%s)", strerror (errno));
-    goto err;
-  }
-
-  (this->children->xlator)->notify (this->children->xlator, 
-				    GF_EVENT_PARENT_UP, this);
+  /* (this->children->xlator)->notify (this->children->xlator, 
+     GF_EVENT_PARENT_UP, this); */
   return 0;
 
  err: 

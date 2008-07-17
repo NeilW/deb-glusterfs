@@ -914,8 +914,9 @@ afr_setxattr_cbk (call_frame_t *frame,
   if (op_ret == 0) {
     local->op_ret = op_ret;
   } else {
-    GF_ERROR (this, "(path=%s child=%s) op_ret=%d op_errno=%d", 
-	      local->loc->path, prev_frame->this->name, op_ret, op_errno);
+    if (local->loc)
+      GF_ERROR (this, "(path=%s child=%s) op_ret=%d op_errno=%d", 
+		local->loc->path, prev_frame->this->name, op_ret, op_errno);
   }
 
   LOCK (&frame->lock);
@@ -925,7 +926,8 @@ afr_setxattr_cbk (call_frame_t *frame,
   UNLOCK (&frame->lock);
 
   if (callcnt == 0) {
-    afr_loc_free (local->loc);
+    if (local->loc)
+      afr_loc_free (local->loc);
     STACK_UNWIND (frame, local->op_ret, local->op_errno);
   }
   return 0;
@@ -947,36 +949,58 @@ afr_setxattr (call_frame_t *frame,
 
   AFR_DEBUG_FMT (this, "loc->path = %s", loc->path);
 
-  afr_errno = data_to_ptr (dict_get (loc->inode->ctx, this->name));
- 
-  AFR_ERRNO_DUP(child_errno, afr_errno, child_count);
+  if (loc->inode && loc->inode->ctx) 
+    {
+      afr_errno = data_to_ptr (dict_get (loc->inode->ctx, this->name)); 
+      AFR_ERRNO_DUP(child_errno, afr_errno, child_count);
+      local->loc = afr_loc_dup (loc);
+    }
 
   frame->local = local;
   local->op_ret = -1;
   local->op_errno = ENOTCONN;
-  local->loc = afr_loc_dup (loc);
 
-  for (i = 0; i < child_count; i++) {
-    if (child_errno[i] == 0)
-      ++local->call_count;
-  }
+  if (afr_errno)
+    {
+      
+      for (i = 0; i < child_count; i++) {
+	if (child_errno[i] == 0)
+	  ++local->call_count;
+      }
+      
+      if (local->call_count == 0) {
+	GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+	STACK_UNWIND (frame, -1, ENOTCONN);
+	return 0;
+      }
+      
+      for (i = 0; i < child_count; i++) {
+	if (child_errno[i] == 0)
+	  STACK_WIND(frame,
+		     afr_setxattr_cbk,
+		     children[i],
+		     children[i]->fops->setxattr,
+		     loc,
+		     dict,
+		     flags);
+      }
+    }
+  else
+    {
+      /* If loc->inode is NULL, send the request to all the nodes, and wait for reply */
+      local->call_count = child_count;
+      for (i = 0; i < child_count; i++) 
+	{
+	  STACK_WIND(frame,
+		     afr_setxattr_cbk,
+		     children[i],
+		     children[i]->fops->setxattr,
+		     loc,
+		     dict,
+		     flags);
+	}
+    }
 
-  if (local->call_count == 0) {
-    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
-    STACK_UNWIND (frame, -1, ENOTCONN);
-    return 0;
-  }
-
-  for (i = 0; i < child_count; i++) {
-    if (child_errno[i] == 0)
-      STACK_WIND(frame,
-		 afr_setxattr_cbk,
-		 children[i],
-		 children[i]->fops->setxattr,
-		 loc,
-		 dict,
-		 flags);
-  }
   return 0;
 }
 
@@ -3829,7 +3853,11 @@ afr_readlink (call_frame_t *frame,
   }
 
   if (i == child_count) {
-    STACK_UNWIND (frame, -1, ENOTCONN, NULL);
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+    STACK_UNWIND (frame,
+		  -1,
+		  ENOTCONN,
+		  NULL);
     return 0;
   }
 
@@ -4455,6 +4483,15 @@ afr_unlink (call_frame_t *frame,
       ++local->call_count;
   }
 
+  if (local->call_count == 0) {
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+    STACK_UNWIND (frame,
+		  -1,
+		  ENOTCONN,
+		  NULL);
+    return 0;
+  }
+
   for (i = 0; i < child_count; i++) {
     if (child_errno[i] == 0){
       STACK_WIND(frame,
@@ -4527,6 +4564,15 @@ afr_rmdir (call_frame_t *frame,
   for (i = 0; i < child_count; i++) {
     if (child_errno[i] == 0)
       ++local->call_count;
+  }
+
+  if (local->call_count == 0) {
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+    STACK_UNWIND (frame,
+		  -1,
+		  ENOTCONN,
+		  NULL);
+    return 0;
   }
 
   for (i = 0; i < child_count; i++) {
@@ -5030,6 +5076,15 @@ afr_rename (call_frame_t *frame,
     }
   }
 
+  if (local->call_count == 0) {
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+    STACK_UNWIND (frame,
+		  -1,
+		  ENOTCONN,
+		  NULL);
+    return 0;
+  }
+
   for(i = 0; i < child_count; i++) {
     if (child_errno[i] == 0) {
       STACK_WIND (frame,
@@ -5121,14 +5176,16 @@ afr_link (call_frame_t *frame,
     if (child_errno[i] == 0)
       break;
   }
+
   if (i == child_count) {
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
     STACK_UNWIND (frame,
 		  -1,
 		  ENOTCONN,
-		  NULL,
-		  NULL);
+		  NULL, NULL);
     return 0;
   }
+
   local->child = i;
   STACK_WIND (frame,
 	      afr_link_cbk,
@@ -5216,6 +5273,15 @@ afr_chmod (call_frame_t *frame,
     if (child_errno[i] == 0) {
       local->call_count++;
     }
+  }
+
+  if (local->call_count == 0) {
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+    STACK_UNWIND (frame,
+		  -1,
+		  ENOTCONN,
+		  NULL);
+    return 0;
   }
 
   for(i = 0; i < child_count; i++) {
@@ -5311,6 +5377,15 @@ afr_chown (call_frame_t *frame,
     }
   }
 
+  if (local->call_count == 0) {
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+    STACK_UNWIND (frame,
+		  -1,
+		  ENOTCONN,
+		  NULL);
+    return 0;
+  }
+
   for(i = 0; i < child_count; i++) {
     if (child_errno[i] == 0) {
       STACK_WIND (frame,
@@ -5388,6 +5463,15 @@ afr_closedir (call_frame_t *frame,
   for (i = 0; i < child_count; i++) {
     if (afrfdp->fdstate[i])
       ++local->call_count;
+  }
+
+  if (local->call_count == 0) {
+    GF_ERROR (this, "child_errno[] is not 0, returning ENOTCONN");
+    STACK_UNWIND (frame,
+		  -1,
+		  ENOTCONN,
+		  NULL);
+    return 0;
   }
 
   for (i = 0; i < child_count; i++) {

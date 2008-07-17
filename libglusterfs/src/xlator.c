@@ -265,13 +265,13 @@ xlator_tree_init (xlator_t *xl)
 
   top = xl;
 
-  while (top->parent)
-    top = top->parent;
+  while (top->parents)
+    top = top->parents->xlator;
 
   ret = xlator_init_rec (top);
 
   if (ret == 0 && top->notify) {
-    top->notify (top, GF_EVENT_PARENT_UP, top->parent);
+    top->notify (top, GF_EVENT_PARENT_UP, NULL);
   }
 
   return ret;
