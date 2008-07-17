@@ -83,7 +83,6 @@ struct _unify_local_t {
   char *path;
   char *name;
   inode_t *inode;
-  inode_t *new_inode; /* Only used in case of rename */
   int32_t revalidate;
 
   ino_t st_ino;
@@ -93,16 +92,22 @@ struct _unify_local_t {
   dict_t *dict;
 
   int16_t *list;
-  int16_t *new_list; /* Used only in case of rename */
   int16_t index;
 
   int32_t failed;
 
+  inode_t *new_inode;    /* Only used in case of rename */
+  inode_t *dummy_inode;  /* Currently, only used in case of rename */
+  int16_t *new_list; /* Used only in case of rename */
+
+
+  /* These are used only in case of self-heal is enabled, and in case of checksum call */
   uint8_t dir_checksum[4096];
   uint8_t ns_dir_checksum[4096];
   uint8_t file_checksum[4096];
   uint8_t ns_file_checksum[4096];
 };
+
 typedef struct _unify_local_t unify_local_t;
 
 int32_t unify_getdents_self_heal (call_frame_t *frame,
