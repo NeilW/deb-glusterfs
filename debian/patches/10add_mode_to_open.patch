@@ -1,0 +1,13 @@
+diff -Nur -x '*.orig' -x '*~' glusterfs/xlators/protocol/server/src/server-protocol.c glusterfs.new/xlators/protocol/server/src/server-protocol.c
+--- glusterfs/xlators/protocol/server/src/server-protocol.c	2008-07-17 09:19:55.000000000 +0100
++++ glusterfs.new/xlators/protocol/server/src/server-protocol.c	2008-08-13 19:23:17.000000000 +0100
+@@ -5353,7 +5353,8 @@
+     goto fail;
+   }
+   
+-  ret = open (GLUSTERFSD_SPEC_PATH, O_WRONLY | O_CREAT | O_SYNC);
++  ret = open (GLUSTERFSD_SPEC_PATH, 
++	      O_WRONLY | O_CREAT | O_SYNC, S_IRUSR | S_IWUSR);
+   spec_fd = ret;
+   if (spec_fd < 0){
+     remote_errno = errno;
