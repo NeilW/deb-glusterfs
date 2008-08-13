@@ -1,18 +1,20 @@
 Source: glusterfs
-Section: universe/admin
+Section: admin
 Priority: optional
-Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
-XSBC-Original-Maintainer: Debian GlusterFS Team <pkg-glusterfs-devel@lists.alioth.debian.org>
+Maintainer: Debian GlusterFS Team <pkg-glusterfs-devel@lists.alioth.debian.org>
+Uploaders: Matthias Albert <matthias@linux4experts.de>, 
+           Leonardo Rodrigues de Mello <l@lmello.eu.org>, 
+           Christian Meder <chris@absolutegiganten.org>,
+           LI Daobing <lidaobing@gmail.com>,
+	   Neil Wilson <neil@brightbox.co.uk>
 Build-Depends: cdbs, debhelper (>= 5), autotools-dev, bison, flex, 
- libfuse-dev (>= 2.6.5), libibverbs-dev (>=1.0.4), help2man, libdb-dev
+ libfuse-dev (>= 2.6.5), libibverbs-dev (>= 1.0.4), help2man, libdb-dev
 Standards-Version: 3.8.0
-Homepage: http://www.gluster.org
+Homepage: http://www.gluster.org/docs/index.php/GlusterFS
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-glusterfs
 Vcs-Svn: svn://svn.debian.org/pkg-glusterfs/trunk/glusterfs
 
 Package: glusterfs-client
-Conflicts: glusterfs
-Replaces: glusterfs
 Architecture: any
 Depends: ${shlibs:Depends}, fuse-utils (>= 2.6.5)
 Suggests: glusterfs-examples
@@ -21,7 +23,7 @@ Description: clustered file-system
  peta-bytes. It aggregates various storage bricks over Infiniband RDMA
  or TCP/IP interconnect into one large parallel network file
  system. GlusterFS is one of the most sophisticated file system in
- terms of features and extensibility.  It borrows a powerful concept
+ terms of features and extensibility. It borrows a powerful concept
  called Translators from GNU Hurd kernel. Much of the code in GlusterFS
  is in userspace and easily manageable.
  .
@@ -36,7 +38,7 @@ Description: clustered file-system
  peta-bytes. It aggregates various storage bricks over Infiniband RDMA
  or TCP/IP interconnect into one large parallel network file
  system. GlusterFS is one of the most sophisticated file system in
- terms of features and extensibility.  It borrows a powerful concept
+ terms of features and extensibility. It borrows a powerful concept
  called Translators from GNU Hurd kernel. Much of the code in GlusterFS
  is in userspace and easily manageable.
  .
@@ -50,14 +52,14 @@ Description: example files for the glusterfs server and client
  peta-bytes. It aggregates various storage bricks over Infiniband RDMA
  or TCP/IP interconnect into one large parallel network file
  system. GlusterFS is one of the most sophisticated file system in
- terms of features and extensibility.  It borrows a powerful concept
+ terms of features and extensibility. It borrows a powerful concept
  called Translators from GNU Hurd kernel. Much of the code in GlusterFS
  is in userspace and easily manageable.
  .
  This package provides example configuration files for glusterfs.
 
 Package: libglusterfs0
-Section: universe/libs
+Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: GlusterFS libraries and translator modules
@@ -65,7 +67,7 @@ Description: GlusterFS libraries and translator modules
  petabytes. It aggregates various storage bricks over Infiniband RDMA
  or TCP/IP interconnect into one large parallel network file
  system. GlusterFS is one of the most sophisticated file system in
- terms of features and extensibility.  It borrows a powerful concept
+ terms of features and extensibility. It borrows a powerful concept
  called Translators from GNU Hurd kernel. Much of the code in GlusterFS
  is in userspace and easily manageable.
  .
@@ -73,10 +75,10 @@ Description: GlusterFS libraries and translator modules
  common to both GlusterFS server and client framework.
 
 Package: libglusterfs-dev
-Section: universe/libdevel
+Section: libdevel
 Architecture: any
 Depends: libc6-dev | libc-dev, libglusterfs0 (= ${binary:Version})
-Description: GlusterFS development Libraries and Headers (development files)
+Description: GlusterFS development libraries and headers (development files)
  GlusterFS is a clustered file-system capable of scaling to several
  peta-bytes. It aggregates various storage bricks over Infiniband RDMA
  or TCP/IP interconnect into one large parallel network file
@@ -88,7 +90,7 @@ Description: GlusterFS development Libraries and Headers (development files)
  This package includes glusterfs development headers and libraries.
 
 Package: glusterfs-dbg
-Section: universe/libdevel
+Section: libdevel
 Priority: extra
 Architecture: any
 Depends: glusterfs-client (= ${binary:Version})

@@ -5,14 +5,40 @@ It was then taken over for official Debian maintenance by the Debian GlusterFS T
 
 Ubuntu alterations by Neil Wilson <neil@brightbox.co.uk>
 
-It was downloaded from http://www.gluster.org
+It was downloaded from http://www.gluster.org/docs/index.php/GlusterFS
 
-Upstream Author: Please visit http://www.gluster.org/core-team.php for complete list of contributors.
+Upstream Authors: Amar Tumballi <amar (at) zresearch.com>
+                  Anand Avati   <avati (at) zresearch.com>
+		  Anand Babu    <ab (at) zresearch.com>
+		  Arun Mahajan  <arun (at) zresearch.com>
+	          Balamurugan A <bala (at) zresearch.com>
+	          Basavanagowda Kanur <gowda (at) zresearch.com>
+		  Gururaj K     <guru (at) zresearch.com>
+                  Harshavardhana Ranganath <harsha (at) zresearch.com>
+		  Krishna Srinivas <krishna (at) zresearch.com>
+		  Prithu Tiwari <prithu (at) zresearch.com>
+		  Raghavendra   <raghavendra (at) zresearch.com>
+                  Vikas Gorur <vikas (at) zresearch.com>
+
+Please visit additionally http://www.gluster.org/core-team.php for a complete list of contributors.
 
 Copyright: (C) 2006,2007,2008 Z RESEARCH Inc. <http://www.zresearch.com>
 
-License: GPL-3 (/usr/share/common-licenses/GPL-3)
+This is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your
+option) any later version.
 
-The Debian packaging is (C) 2007, Debian GlusterFS Team
+This is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License with
+your Debian GNU/Linux system, in /usr/share/common-licenses/GPL, or
+with the dpkg source package as the file COPYING. If not, see 
+<http://www.gnu.org/licenses/>.
+
+The Debian packaging is (C) 2007,2008 Debian GlusterFS Team
 <pkg-glusterfs-devel@lists.alioth.debian.org> and is licensed under the GPL, see
 /usr/share/common-licenses/GPL.
