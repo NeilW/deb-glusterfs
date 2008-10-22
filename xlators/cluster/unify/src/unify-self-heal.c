@@ -150,7 +150,7 @@ unify_sh_setdents_cbk (call_frame_t *frame,
   }
   UNLOCK (&frame->lock);
 
-  if (!callcnt && cookie) {
+  if (!callcnt && local->flags) {
     local->call_count = 0;
     for (index = 0; list[index] != -1; index++)
       local->call_count++;
@@ -214,39 +214,25 @@ unify_sh_ns_getdents_cbk (call_frame_t *frame,
 	callcnt++;
       }
     }
+    if (final)
+      local->flags = 1;
   }
   UNLOCK (&frame->lock);
 
-  if (entry) {
-    for (index = 0; list[index] != -1; index++) {
-      if (NS(this) != priv->xl_array[list[index]]) {
-	STACK_WIND_COOKIE (frame,
-		     unify_sh_setdents_cbk, (void *)final,
-		     priv->xl_array[list[index]],
-		     priv->xl_array[list[index]]->fops->setdents,
-		     local->fd,
-		     GF_SET_DIR_ONLY,
-		     entry, count);
-	if (!--callcnt)
-	  break;
-      }
-    }
-  } else {
-    local->call_count = 0;
-    for (index = 0; list[index] != -1; index++)
-      local->call_count++;
-    
-    for (index = 0; list[index] != -1; index++) {
-      char need_break = (list[index+1] == -1);
+  for (index = 0; list[index] != -1; index++) {
+    if (NS(this) != priv->xl_array[list[index]]) {
       STACK_WIND (frame,
-		  unify_sh_closedir_cbk,
+		  unify_sh_setdents_cbk,
 		  priv->xl_array[list[index]],
-		  priv->xl_array[list[index]]->fops->closedir,
-		  local->fd);
-      if (need_break)
+		  priv->xl_array[list[index]]->fops->setdents,
+		  local->fd,
+		  GF_SET_DIR_ONLY,
+		  entry, count);
+      if (!--callcnt)
 	break;
     }
   }
+
   return 0;
 }
 
@@ -598,7 +584,7 @@ gf_unify_self_heal (call_frame_t *frame,
 		   unify_sh_checksum_cbk,
 		   priv->xl_array[index],
 		   priv->xl_array[index],
-		   priv->xl_array[index]->mops->checksum,
+		   priv->xl_array[index]->fops->checksum,
 		   &tmp_loc,
 		   0);
     }

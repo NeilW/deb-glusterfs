@@ -21,17 +21,17 @@
 %define release_version 1
 
 # if you wish to compile an rpm without ibverbs support, compile like this...
-# rpmbuild -ta glusterfs-1.3.10.tar.gz --without ibverbs
+# rpmbuild -ta glusterfs-1.3.12.tar.gz --without ibverbs
 %define with_ibverbs %{?_without_ibverbs:0}%{?!_without_ibverbs:1}
 
 # if you wish to compile an rpm without building the client RPMs...
-# rpmbuild -ta glusterfs-1.3.10.tar.gz --without client
+# rpmbuild -ta glusterfs-1.3.12.tar.gz --without client
 %define with_client %{?_without_client:0}%{?!_without_client:1}
 
 
 Summary: GNU Cluster File System
 Name: glusterfs
-Version: 1.3.10
+Version: 1.3.12
 Release: %release_version
 License: GPLv3 or later
 Group: System Environment/Base
@@ -48,7 +48,7 @@ BuildRequires: libtool
 BuildRequires: byacc bison flex
 BuildRequires: gcc
 BuildRequires: make
-URL: ftp://ftp.zresearch.com/pub/gluster/glusterfs/1.3/glusterfs-1.3.10.tar.gz
+URL: ftp://ftp.zresearch.com/pub/gluster/glusterfs/1.3/glusterfs-1.3.12.tar.gz
 Source: %name-%version.tar.gz
 
 %description

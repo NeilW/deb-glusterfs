@@ -88,6 +88,8 @@ struct iot_conf {
   off_t current_size;
   pthread_cond_t q_cond;
   pthread_mutex_t lock;
+
+  int32_t misc_thread_index; /* Used to schedule the miscellaneous calls like checksum etc */
 };
 
 typedef struct iot_file iot_file_t;

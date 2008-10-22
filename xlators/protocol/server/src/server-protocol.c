@@ -5260,17 +5260,23 @@ server_checksum_cbk (call_frame_t *frame,
 		     uint8_t *fchecksum,
 		     uint8_t *dchecksum)
 {
+  uint8_t *file_checksum = NULL;
+  uint8_t *dir_checksum = NULL;
   dict_t *reply = get_new_dict ();
 
   dict_set (reply, "RET", data_from_int32 (op_ret));
   dict_set (reply, "ERRNO", data_from_int32 (op_errno));
 
   if (op_ret >= 0) {
-    dict_set (reply, "file-checksum-data", bin_to_data (fchecksum, 4096));
-    dict_set (reply, "dir-checksum-data", bin_to_data (dchecksum, 4096));
+    file_checksum = calloc (1, 4096);
+    dir_checksum = calloc (1, 4096);
+    memcpy (file_checksum, fchecksum, 4096);
+    memcpy (dir_checksum, dchecksum, 4096);
+    dict_set (reply, "file-checksum-data", data_from_dynptr (file_checksum, 4096));
+    dict_set (reply, "dir-checksum-data", data_from_dynptr (dir_checksum, 4096));
   }
 
-  server_reply (frame, GF_OP_TYPE_MOP_REPLY, GF_MOP_CHECKSUM,
+  server_reply (frame, GF_OP_TYPE_FOP_REPLY, GF_FOP_CHECKSUM,
 		reply, frame->root->rsp_refs);
 
   return 0;
@@ -5308,7 +5314,7 @@ server_checksum (call_frame_t *frame,
   STACK_WIND (frame,
 	      server_checksum_cbk,
 	      BOUND_XL (frame),
-	      BOUND_XL (frame)->mops->checksum,
+	      BOUND_XL (frame)->fops->checksum,
 	      &loc,
 	      flag);
 
@@ -5353,7 +5359,8 @@ mop_setspec (call_frame_t *frame,
     goto fail;
   }
   
-  ret = open (GLUSTERFSD_SPEC_PATH, O_WRONLY | O_CREAT | O_SYNC);
+  ret = open (GLUSTERFSD_SPEC_PATH, 
+	      O_WRONLY | O_CREAT | O_SYNC, S_IRUSR | S_IWUSR);
   spec_fd = ret;
   if (spec_fd < 0){
     remote_errno = errno;
@@ -5999,7 +6006,8 @@ static gf_op_t gf_fops[] = {
   server_setdents,
   server_rmelem,
   server_incver,
-  server_readdir
+  server_readdir,
+  server_checksum,
 };
 
 static gf_op_t gf_mops[] = {
@@ -6012,7 +6020,6 @@ static gf_op_t gf_mops[] = {
   mop_unlock,
   mop_listlocks,
   mop_fsck,
-  server_checksum,
 };
 
 /*

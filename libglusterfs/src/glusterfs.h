@@ -117,6 +117,7 @@ typedef enum {
   GF_FOP_RMELEM,
   GF_FOP_INCVER,
   GF_FOP_READDIR,
+  GF_FOP_CHECKSUM,
   GF_FOP_MAXVALUE,
 } glusterfs_fop_t;
 
@@ -131,7 +132,6 @@ typedef enum {
   GF_MOP_UNLOCK,
   GF_MOP_LISTLOCKS,
   GF_MOP_FSCK,
-  GF_MOP_CHECKSUM,
   GF_MOP_MAXVALUE
 } glusterfs_mop_t;
 

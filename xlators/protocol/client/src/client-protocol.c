@@ -1988,6 +1988,12 @@ client_setdents (call_frame_t *frame,
   dict_t *request = NULL;
   data_t *fd_data = NULL;
 
+  if (!entries || !count) {
+    /* No log is required as this can happen frequently */
+    STACK_UNWIND (frame, -1, EINVAL);
+    return 0;
+  }
+
   if (fd && fd->ctx)
     fd_data = dict_get (fd->ctx, this->name);
 
@@ -1999,6 +2005,7 @@ client_setdents (call_frame_t *frame,
     return 0;
   }
 
+  
   fd_str = strdup (data_to_str (fd_data));
   request = get_new_dict ();
   dict_set (request, "FD", str_to_data (fd_str));
@@ -4580,8 +4587,8 @@ client_checksum (call_frame_t *frame,
   dict_set (request, "INODE", data_from_uint64 (ino));
   dict_set (request, "FLAG", data_from_uint32 (flag));
 
-  ret = client_protocol_xfer (frame, this, GF_OP_TYPE_MOP_REQUEST,
-			      GF_MOP_CHECKSUM, request);
+  ret = client_protocol_xfer (frame, this, GF_OP_TYPE_FOP_REQUEST,
+			      GF_FOP_CHECKSUM, request);
 
   dict_destroy (request);
 
@@ -4882,7 +4889,8 @@ static gf_op_t gf_fops[] = {
   client_setdents_cbk,
   client_rmelem_cbk,
   client_incver_cbk,
-  client_readdir_cbk
+  client_readdir_cbk,
+  client_checksum_cbk,
 };
 
 static gf_op_t gf_mops[] = {
@@ -4895,7 +4903,6 @@ static gf_op_t gf_mops[] = {
   client_unlock_cbk,
   client_listlocks_cbk,
   client_fsck_cbk,
-  client_checksum_cbk,
 };
 
 /*
@@ -5418,7 +5425,8 @@ struct xlator_fops fops = {
   .fchmod      = client_fchmod,
   .fchown      = client_fchown,
   .setdents    = client_setdents,
-  .getdents    = client_getdents
+  .getdents    = client_getdents,
+  .checksum    = client_checksum,
 };
 
 struct xlator_mops mops = {
@@ -5427,5 +5435,4 @@ struct xlator_mops mops = {
   .unlock    = client_unlock,
   .listlocks = client_listlocks,
   .getspec   = client_getspec,
-  .checksum  = client_checksum
 };
