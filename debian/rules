@@ -3,6 +3,9 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
+# generated with `tla changelog > debian/changelog.tla`
+DEB_INSTALL_CHANGELOGS_ALL = debian/changelog.tla
+
 install/glusterfs-server::
 	mv debian/tmp/etc/glusterfs/glusterfs-client.vol.sample \
 	   debian/tmp/etc/glusterfs/glusterfs-client.vol

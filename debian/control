@@ -1,8 +1,7 @@
 Source: glusterfs
 Section: admin
 Priority: optional
-Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
-XSBC-Original-Maintainer: Debian GlusterFS Team <pkg-glusterfs-devel@lists.alioth.debian.org>
+Maintainer: Debian GlusterFS Team <pkg-glusterfs-devel@lists.alioth.debian.org>
 Uploaders: Matthias Albert <matthias@linux4experts.de>, 
            Leonardo Rodrigues de Mello <l@lmello.eu.org>, 
            Christian Meder <chris@absolutegiganten.org>,

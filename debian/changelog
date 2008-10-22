@@ -1,9 +1,9 @@
-glusterfs (1.3.10-1ubuntu1~bbox1) intrepid; urgency=low
+glusterfs (1.3.12-1) unstable; urgency=low
 
-  * patches/10add_mode_to_open.patch - Add mode to open command to fix FTBFS
-  * Initial release - closes LP: 246175
+  * new upstream release, closes: #495312 
+  * include upstream changelog extracted from tla
 
- -- Neil Wilson <neil@brightbox.co.uk>  Wed, 13 Aug 2008 19:24:11 +0100
+ -- Matthias Albert <matthias@linux4experts.de>  Fri, 12 Sep 2008 17:32:47 +0200
 
 glusterfs (1.3.10-1) unstable; urgency=low
 
@@ -27,7 +27,7 @@ glusterfs (1.3.10-0ubunut1) intrepid; urgency=low
 
 glusterfs (1.3.9-0ubuntu1) intrepid; urgency=low
 
-  * public release 
+  * public release (closes LP#246715)
   * debian/rules: Add get-orig-source target
   * debian/control: Alter section to point at universe
   * debian/copyright: Update to GPL-3
