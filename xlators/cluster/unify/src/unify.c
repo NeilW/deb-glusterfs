@@ -515,10 +515,11 @@ unify_mkdir_cbk (call_frame_t *frame,
        */
       gf_log (this->name, GF_LOG_ERROR,
 	      "%s returned %d", priv->xl_array[(long)cookie]->name, op_errno);
-      local->failed = 1;
+      if (op_errno != EEXIST)
+	local->failed = 1;
     }
   
-    if (op_ret >= 0) {
+    if ((op_ret >= 0) || ((op_ret == -1) && (op_errno == EEXIST))) {
       local->op_ret = 0;
       /* This is to be used as hint from the inode and also mapping */
       local->list[local->index++] = (int16_t)(long)cookie;
@@ -3857,7 +3858,7 @@ unify_checksum (call_frame_t *frame,
   STACK_WIND (frame,
 	      unify_checksum_cbk,
 	      NS(this),
-	      NS(this)->mops->checksum,
+	      NS(this)->fops->checksum,
 	      loc,
 	      flag);
 
@@ -4177,9 +4178,9 @@ struct xlator_fops fops = {
   .rmelem      = unify_rmelem,
   .getdents    = unify_getdents,
   //  .setdents    = unify_setdents,
+  .checksum    = unify_checksum,
 };
 
 struct xlator_mops mops = {
   //  .stats = unify_stats
-  .checksum = unify_checksum,
 };

@@ -1632,12 +1632,14 @@ afr_selfheal_open_cbk (call_frame_t *frame,
     } else {
       local->call_count = sync_file_cnt;
       for (i = 0; i < child_count; i++) {
-	if (afrfdp->fdstate[i])
+	if (sync_file_cnt && afrfdp->fdstate[i]) {
+	  sync_file_cnt --;
 	  STACK_WIND (frame,
 		      afr_selfheal_nosync_close_cbk,
 		      children[i],
 		      children[i]->fops->close,
 		      local->fd);
+	}
       }
     }
   }
@@ -5877,7 +5879,7 @@ afr_checksum_cbk (call_frame_t *frame,
     STACK_WIND (frame,
 		afr_checksum_cbk,
 		local->xlnodeptr->xlator,
-		local->xlnodeptr->xlator->mops->checksum,
+		local->xlnodeptr->xlator->fops->checksum,
 		local->loc,
 		local->flags);
 
@@ -5908,7 +5910,7 @@ afr_checksum (call_frame_t *frame,
   STACK_WIND (frame,
 	      afr_checksum_cbk,
 	      local->xlnodeptr->xlator,
-	      local->xlnodeptr->xlator->mops->checksum,
+	      local->xlnodeptr->xlator->fops->checksum,
 	      loc,
 	      flags);
 
@@ -6195,13 +6197,13 @@ struct xlator_fops fops = {
   .fchmod      = afr_fchmod,
   .fchown      = afr_fchown,
   .setdents    = afr_setdents,
-  .lookup_cbk  = afr_lookup_cbk
+  .lookup_cbk  = afr_lookup_cbk,
+  .checksum    = afr_checksum,
 };
 
 struct xlator_mops mops = {
   .stats = afr_stats,
   .lock = afr_lock,
   .unlock = afr_unlock,
-  .checksum = afr_checksum,
 };
 

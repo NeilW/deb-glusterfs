@@ -328,8 +328,8 @@ init (xlator_t *this)
     asprintf (&type, "%s/client", transport_type);
     dict_set (client_options, "transport-type", data_from_dynstr (type));
 
-    //asprintf (&type, "%s/server", transport_type);
-    //dict_set (server_options, "transport-type", data_from_dynstr (type));
+    asprintf (&type, "%s/server", transport_type);
+    dict_set (server_options, "transport-type", data_from_dynstr (type));
   }
 
   trans = transport_load (server_options, this, this->notify);

@@ -2439,7 +2439,6 @@ struct xlator_mops mops = {
   .stats    = posix_stats,
   .lock     = mop_lock_impl,
   .unlock   = mop_unlock_impl,
-  .checksum = posix_checksum,
 };
 
 struct xlator_fops fops = {
@@ -2483,4 +2482,5 @@ struct xlator_fops fops = {
   .fchmod      = posix_fchmod,
   .setdents    = posix_setdents,
   .getdents    = posix_getdents,
+  .checksum    = posix_checksum,
 };
